@@ -36,11 +36,12 @@ const navItems = [
 
 interface SidebarProps {
   onClose?: () => void
+  isOwner: boolean
 }
 
-function SidebarContent({ onClose }: SidebarProps) {
+function SidebarContent({ onClose, isOwner }: SidebarProps) {
   const pathname = usePathname()
-  const { user, isOwner } = useAuth()
+  const { user } = useAuth()
 
   return (
     <div className="flex flex-col h-full">
@@ -65,6 +66,7 @@ function SidebarContent({ onClose }: SidebarProps) {
       {/* Nav */}
       <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
+          // Hide ownerOnly items for non-owners — but only once we know the role
           if (item.ownerOnly && !isOwner) return null
           const isActive = item.href === '/dashboard'
             ? pathname === '/dashboard'
@@ -128,7 +130,11 @@ function SidebarContent({ onClose }: SidebarProps) {
   )
 }
 
-export default function Sidebar() {
+interface RootSidebarProps {
+  isOwner: boolean
+}
+
+export default function Sidebar({ isOwner }: RootSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
@@ -156,12 +162,12 @@ export default function Sidebar() {
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <SidebarContent onClose={() => setMobileOpen(false)} />
+        <SidebarContent isOwner={isOwner} onClose={() => setMobileOpen(false)} />
       </aside>
 
       {/* Desktop sidebar */}
       <aside className="sidebar hidden lg:flex">
-        <SidebarContent />
+        <SidebarContent isOwner={isOwner} />
       </aside>
     </>
   )

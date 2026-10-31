@@ -13,9 +13,11 @@ export default async function AppLayout({
   if (!user) redirect('/auth/login')
   if (!user.is_active) redirect('/auth/login?error=account_disabled')
 
+  const isOwner = user.role === 'owner'
+
   return (
     <div className="min-h-screen flex bg-slate-50">
-      <Sidebar />
+      <Sidebar isOwner={isOwner} />
       <main
         className="flex-1 min-h-screen overflow-x-hidden"
         style={{ marginLeft: 'var(--sidebar-width)' }}
